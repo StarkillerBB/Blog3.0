@@ -95,7 +95,7 @@ GO
 
 
 
-CREATE PROCEDURE newContact
+CREATE PROCEDURE createContact
 @name nvarchar(50),
 @address nvarchar(50),
 @phone nvarchar(50),
@@ -106,8 +106,19 @@ INSERT INTO contact(name, address, phone, mail, linkedin)
 VALUES (@name, @address, @phone, @mail, @linkedin)
 GO
 
-CREATE PROCEDURE blogPost
-@text nvarchar(50),
+
+CREATE PROCEDURE createEntries
+@name nvarchar(50),
+@postDate datetime,
+@headline nvarchar(50),
+@active bit
+AS
+INSERT INTO entries(name, postDate, headline, active)
+VALUES (@name, @postDate, @headline, @active);
+GO
+
+CREATE PROCEDURE createBlogPost
+@text nvarchar(MAX),
 @startDate datetime,
 @endDate datetime,
 @file nvarchar(50)
@@ -115,6 +126,59 @@ AS
 INSERT INTO blogPost(text, startDate, endDate, files)
 VALUES (@text, @startDate, @endDate, @file)
 GO
+
+CREATE PROCEDURE createFrameworkReview
+@text nvarchar(MAX),
+@numberOfStars int,
+@link nvarchar(50),
+@headline nvarchar(50),
+@postDate datetime,
+@file nvarchar(50)
+AS
+INSERT INTO frameworkReview(text, numberOfStars, link, headline, postDate, files)
+VALUES(@text, @numberOfStars, @link, @headline, @postDate, @file)
+GO
+
+CREATE PROCEDURE createReference
+@text nvarchar(MAX),
+@headline nvarchar(50),
+@postDate datetime,
+@file nvarchar(50)
+AS
+INSERT INTO reference (text, headline, postDate, files)
+VALUES (@text, @headline, @postDate, @file)
+GO
+
+CREATE PROCEDURE createLanguages
+@name nvarchar(50)
+AS
+INSERT INTO languages(name)
+VALUES(@name)
+GO
+
+CREATE PROCEDURE createTags
+@tag nvarchar(50)
+AS
+INSERT INTO tags (tags)
+VALUES (@tag)
+GO
+
+CREATE PROCEDURE createImages
+@name nvarchar(50),
+@description nvarchar(MAX),
+@path nvarchar(50)
+AS
+INSERT INTO images (name, description, path)
+VALUES(@name, @desctription, @path)
+GO
+
+
+
+
+
+
+
+
 
 
 
