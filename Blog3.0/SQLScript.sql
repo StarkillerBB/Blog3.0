@@ -20,7 +20,7 @@ CREATE TABLE [contact] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [name] nvarchar(50),
   [address] nvarchar(50),
-  [phone] int,
+  [phone] nvarchar(10),
   [mail] nvarchar(50),
   [linkedin] nvarchar(50)
 )
@@ -115,11 +115,11 @@ ALTER TABLE [tags] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
 GO
 
 
-
+-- CREATE
 CREATE PROCEDURE createContact
 @name nvarchar(50),
 @address nvarchar(50),
-@phone nvarchar(50),
+@phone nvarchar(10),
 @mail nvarchar(50),
 @linkedin nvarchar(50)
 AS
@@ -146,7 +146,7 @@ CREATE PROCEDURE createBlogPost
 @type nvarchar(50)
 AS
 INSERT INTO blogPost(text, startDate, endDate, files, type)
-VALUES (@text, @startDate, @endDate, @file, @type)
+VALUES (@text, @startDate, @endDate, @files, @type)
 GO
 
 CREATE PROCEDURE createFrameworkReview
@@ -155,22 +155,22 @@ CREATE PROCEDURE createFrameworkReview
 @link nvarchar(50),
 @headline nvarchar(50),
 @postDate datetime,
-@file nvarchar(50),
+@files nvarchar(50),
 @type nvarchar(50)
 AS
 INSERT INTO frameworkReview(text, numberOfStars, link, headline, postDate, files, type)
-VALUES(@text, @numberOfStars, @link, @headline, @postDate, @file, @type)
+VALUES(@text, @numberOfStars, @link, @headline, @postDate, @files, @type)
 GO
 
 CREATE PROCEDURE createReference
 @text nvarchar(MAX),
 @headline nvarchar(50),
 @postDate datetime,
-@file nvarchar(50),
+@files nvarchar(50),
 @type nvarchar(50)
 AS
 INSERT INTO reference (text, headline, postDate, files, type)
-VALUES (@text, @headline, @postDate, @file, @type)
+VALUES (@text, @headline, @postDate, @files, @type)
 GO
 
 CREATE PROCEDURE createLanguages
@@ -196,10 +196,12 @@ INSERT INTO images (name, description, path)
 VALUES(@name, @desctription, @path)
 GO
 
+-- GET information
 -- Since there is only one contact there is no need for any where statement
 CREATE PROCEDURE getContact
 AS
-SELECT * FROM contact
+SELECT *
+FROM contact
 GO
 
 CREATE PROCEDURE getAllPosts
@@ -220,6 +222,21 @@ INNER JOIN images
 ON entries.id = images.entryId
 GO
 
+--UPDATE information
+
+CREATE PROCEDURE updateContact
+@id int,
+@name nvarchar(50),
+@address nvarchar(50),
+@phone nvarchar(10),
+@mail nvarchar(50),
+@linkedin nvarchar(50)
+AS
+UPDATE contact
+SET name=@name, address=@address, phone=@phone, mail=@mail, linkedin=@linkedin
+WHERE id=@id
+GO
+
 CREATE PROCEDURE updateEntries
 @id int,
 @name nvarchar(50),
@@ -236,10 +253,10 @@ CREATE PROCEDURE updateBlogPost
 @text nvarchar(MAX),
 @startDate datetime,
 @endDate datetime,
-@file nvarchar(50)
+@files nvarchar(50)
 AS
 UPDATE blogPost
-SET text=@text, startDate=@startDate, endDate=@endDate, file=@file
+SET text=@text, startDate=@startDate, endDate=@endDate, files=@file
 WHERE id=@id
 GO
 
@@ -253,13 +270,60 @@ CREATE PROCEDURE updateFrameworkReview
 @files nvarchar(50)
 AS
 UPDATE frameworkReview
-SET name=@name, headline=@headline, active=@active
+SET text=@text, numberOfStars=@numberOfStars, link=@link, headline=@headline, files=@files
 WHERE id=@id
 GO
 
+CREATE PROCEDURE updateReference
+@id int,
+@text nvarchar(MAX),
+@headline nvarchar(50),
+@postDate datetime,
+@files nvarchar(50)
+AS
+UPDATE reference
+SET text=@text, headline=@headline, files=@files
+WHERE id=@id
+GO
 
+CREATE PROCEDURE updatelanguages
+@id int,
+@name nvarchar(50)
+AS
+UPDATE languages
+SET name=@name
+WHERE id=@id
+GO
 
+CREATE PROCEDURE updateTags
+@id int,
+@tags nvarchar(50)
+AS
+UPDATE tags
+SET tags=@tags
+WHERE id=@id
+GO
 
+CREATE PROCEDURE updateImages
+@id int,
+@name nvarchar(50),
+@description nvarchar(50),
+@path nvarchar(50)
+AS
+UPDATE images
+SET name=@name, description=@desciption, path=@path
+WHERE id=@id
+GO
+
+-- DELETE 
+
+CREATE PROCEDURE deleteEntry
+@id int
+AS
+DELETE entries
+FROM entries, blogPost
+INNER JOIN blogPost ON entries.id=blogPost.entryId
+WHERE entries.id=@id
 
 
 
