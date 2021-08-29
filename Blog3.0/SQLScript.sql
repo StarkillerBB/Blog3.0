@@ -1,4 +1,22 @@
-﻿CREATE TABLE [contact] (
+﻿﻿DROP TABLE IF EXISTS dbo.tblApartmentPrice
+GO
+DROP TABLE IF EXISTS dbo.tblAttraction
+GO
+DROP TABLE IF EXISTS dbo.tblBooking
+GO
+DROP TABLE IF EXISTS dbo.tblApartment
+GO
+DROP TABLE IF EXISTS dbo.tblBruger
+GO
+DROP TABLE IF EXISTS dbo.tblPriceGroup
+GO
+DROP TABLE IF EXISTS dbo.tblSetting
+GO
+
+
+
+
+CREATE TABLE [contact] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [name] nvarchar(50),
   [address] nvarchar(50),
@@ -23,7 +41,8 @@ CREATE TABLE [blogPost] (
   [text] nvarchar(MAX),
   [startDate] datetime,
   [endDate] datetime,
-  [files] nvarchar(50)
+  [files] nvarchar(50),
+  [type] nvarchar(50)
 )
 GO
 
@@ -36,7 +55,8 @@ CREATE TABLE [frameworkReview] (
   [headline] nvarchar(50),
   [active] bit,
   [postDate] datetime,
-  [files] nvarchar(50)
+  [files] nvarchar(50),
+  [type] nvarchar(50)
 )
 GO
 
@@ -48,7 +68,8 @@ CREATE TABLE [reference] (
   [headline] nvarchar(50),
   [active] bit,
   [postDate] datetime,
-  [files] nvarchar(50)
+  [files] nvarchar(50),
+  [type] nvarchar(50)
 )
 GO
 
@@ -121,10 +142,11 @@ CREATE PROCEDURE createBlogPost
 @text nvarchar(MAX),
 @startDate datetime,
 @endDate datetime,
-@file nvarchar(50)
+@files nvarchar(50),
+@type nvarchar(50)
 AS
-INSERT INTO blogPost(text, startDate, endDate, files)
-VALUES (@text, @startDate, @endDate, @file)
+INSERT INTO blogPost(text, startDate, endDate, files, type)
+VALUES (@text, @startDate, @endDate, @file, @type)
 GO
 
 CREATE PROCEDURE createFrameworkReview
@@ -133,20 +155,22 @@ CREATE PROCEDURE createFrameworkReview
 @link nvarchar(50),
 @headline nvarchar(50),
 @postDate datetime,
-@file nvarchar(50)
+@file nvarchar(50),
+@type nvarchar(50)
 AS
-INSERT INTO frameworkReview(text, numberOfStars, link, headline, postDate, files)
-VALUES(@text, @numberOfStars, @link, @headline, @postDate, @file)
+INSERT INTO frameworkReview(text, numberOfStars, link, headline, postDate, files, type)
+VALUES(@text, @numberOfStars, @link, @headline, @postDate, @file, @type)
 GO
 
 CREATE PROCEDURE createReference
 @text nvarchar(MAX),
 @headline nvarchar(50),
 @postDate datetime,
-@file nvarchar(50)
+@file nvarchar(50),
+@type nvarchar(50)
 AS
-INSERT INTO reference (text, headline, postDate, files)
-VALUES (@text, @headline, @postDate, @file)
+INSERT INTO reference (text, headline, postDate, files, type)
+VALUES (@text, @headline, @postDate, @file, @type)
 GO
 
 CREATE PROCEDURE createLanguages
@@ -172,6 +196,66 @@ INSERT INTO images (name, description, path)
 VALUES(@name, @desctription, @path)
 GO
 
+-- Since there is only one contact there is no need for any where statement
+CREATE PROCEDURE getContact
+AS
+SELECT * FROM contact
+GO
+
+CREATE PROCEDURE getAllPosts
+AS
+SELECT *
+FROM entries
+INNER JOIN reference 
+ON entries.id = reference.entryId
+INNER JOIN languages
+ON reference.id = languages.referenceId
+INNER JOIN frameworkReview
+ON entries.id = frameworkReview.entryId
+INNER JOIN blogPost
+ON entries.id = blogPost.entryId
+INNER JOIN tags
+ON entries.id = tags.entryId
+INNER JOIN images
+ON entries.id = images.entryId
+GO
+
+CREATE PROCEDURE updateEntries
+@id int,
+@name nvarchar(50),
+@headline nvarchar(50),
+@active bit
+AS
+UPDATE entries
+SET name=@name, headline=@headline, active=@active
+WHERE id=@id
+GO
+
+CREATE PROCEDURE updateBlogPost
+@id int,
+@text nvarchar(MAX),
+@startDate datetime,
+@endDate datetime,
+@file nvarchar(50)
+AS
+UPDATE blogPost
+SET text=@text, startDate=@startDate, endDate=@endDate, file=@file
+WHERE id=@id
+GO
+
+CREATE PROCEDURE updateFrameworkReview
+@id int,
+@text nvarchar(MAX),
+@numberOfStars int,
+@link nvarchar(50),
+@headline nvarchar(50),
+@postDate datetime,
+@files nvarchar(50)
+AS
+UPDATE frameworkReview
+SET name=@name, headline=@headline, active=@active
+WHERE id=@id
+GO
 
 
 
