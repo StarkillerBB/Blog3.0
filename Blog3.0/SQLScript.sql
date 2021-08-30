@@ -315,15 +315,7 @@ SET name=@name, description=@desciption, path=@path
 WHERE id=@id
 GO
 
--- DELETE 
 
-CREATE PROCEDURE deleteEntry
-@id int
-AS
-DELETE entries
-FROM entries, blogPost
-INNER JOIN blogPost ON entries.id=blogPost.entryId
-WHERE entries.id=@id
 
 
 
