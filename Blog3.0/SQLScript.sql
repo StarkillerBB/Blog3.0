@@ -1,18 +1,19 @@
-﻿﻿DROP TABLE IF EXISTS dbo.tblApartmentPrice
+﻿﻿DROP TABLE IF EXISTS contact
 GO
-DROP TABLE IF EXISTS dbo.tblAttraction
+DROP TABLE IF EXISTS tags
 GO
-DROP TABLE IF EXISTS dbo.tblBooking
+DROP TABLE IF EXISTS images
 GO
-DROP TABLE IF EXISTS dbo.tblApartment
+DROP TABLE IF EXISTS languages
 GO
-DROP TABLE IF EXISTS dbo.tblBruger
+DROP TABLE IF EXISTS blogPost
 GO
-DROP TABLE IF EXISTS dbo.tblPriceGroup
+DROP TABLE IF EXISTS frameworkReview
 GO
-DROP TABLE IF EXISTS dbo.tblSetting
+DROP TABLE IF EXISTS reference
 GO
-
+DROP TABLE IF EXISTS entries
+GO
 
 
 
@@ -114,8 +115,10 @@ GO
 ALTER TABLE [tags] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
 GO
 
-
 -- CREATE
+
+DROP PROCEDURE IF EXISTS createContact
+GO
 CREATE PROCEDURE createContact
 @name nvarchar(50),
 @address nvarchar(50),
@@ -127,7 +130,8 @@ INSERT INTO contact(name, address, phone, mail, linkedin)
 VALUES (@name, @address, @phone, @mail, @linkedin)
 GO
 
-
+DROP PROCEDURE IF EXISTS createEntries
+GO
 CREATE PROCEDURE createEntries
 @name nvarchar(50),
 @postDate datetime,
@@ -138,6 +142,8 @@ INSERT INTO entries(name, postDate, headline, active)
 VALUES (@name, @postDate, @headline, @active);
 GO
 
+DROP PROCEDURE IF EXISTS createBlogPost
+GO
 CREATE PROCEDURE createBlogPost
 @text nvarchar(MAX),
 @startDate datetime,
@@ -149,6 +155,8 @@ INSERT INTO blogPost(text, startDate, endDate, files, type)
 VALUES (@text, @startDate, @endDate, @files, @type)
 GO
 
+DROP PROCEDURE IF EXISTS createFrameworkReview
+GO
 CREATE PROCEDURE createFrameworkReview
 @text nvarchar(MAX),
 @numberOfStars int,
@@ -162,6 +170,8 @@ INSERT INTO frameworkReview(text, numberOfStars, link, headline, postDate, files
 VALUES(@text, @numberOfStars, @link, @headline, @postDate, @files, @type)
 GO
 
+DROP PROCEDURE IF EXISTS createReference
+GO
 CREATE PROCEDURE createReference
 @text nvarchar(MAX),
 @headline nvarchar(50),
@@ -173,6 +183,8 @@ INSERT INTO reference (text, headline, postDate, files, type)
 VALUES (@text, @headline, @postDate, @files, @type)
 GO
 
+DROP PROCEDURE IF EXISTS createLanguages
+GO
 CREATE PROCEDURE createLanguages
 @name nvarchar(50)
 AS
@@ -180,6 +192,8 @@ INSERT INTO languages(name)
 VALUES(@name)
 GO
 
+DROP PROCEDURE IF EXISTS createTags
+GO
 CREATE PROCEDURE createTags
 @tag nvarchar(50)
 AS
@@ -187,23 +201,29 @@ INSERT INTO tags (tags)
 VALUES (@tag)
 GO
 
+DROP PROCEDURE IF EXISTS createImages
+GO
 CREATE PROCEDURE createImages
 @name nvarchar(50),
 @description nvarchar(MAX),
 @path nvarchar(50)
 AS
 INSERT INTO images (name, description, path)
-VALUES(@name, @desctription, @path)
+VALUES(@name, @description, @path)
 GO
 
 -- GET information
 -- Since there is only one contact there is no need for any where statement
+DROP PROCEDURE IF EXISTS getContact
+GO
 CREATE PROCEDURE getContact
 AS
 SELECT *
 FROM contact
 GO
 
+DROP PROCEDURE IF EXISTS getAllPosts
+GO
 CREATE PROCEDURE getAllPosts
 AS
 SELECT *
@@ -224,6 +244,8 @@ GO
 
 --UPDATE information
 
+DROP PROCEDURE IF EXISTS updateContact
+GO
 CREATE PROCEDURE updateContact
 @id int,
 @name nvarchar(50),
@@ -237,6 +259,8 @@ SET name=@name, address=@address, phone=@phone, mail=@mail, linkedin=@linkedin
 WHERE id=@id
 GO
 
+DROP PROCEDURE IF EXISTS updateEntries
+GO
 CREATE PROCEDURE updateEntries
 @id int,
 @name nvarchar(50),
@@ -248,6 +272,8 @@ SET name=@name, headline=@headline, active=@active
 WHERE id=@id
 GO
 
+DROP PROCEDURE IF EXISTS updateBlogPost
+GO
 CREATE PROCEDURE updateBlogPost
 @id int,
 @text nvarchar(MAX),
@@ -256,10 +282,12 @@ CREATE PROCEDURE updateBlogPost
 @files nvarchar(50)
 AS
 UPDATE blogPost
-SET text=@text, startDate=@startDate, endDate=@endDate, files=@file
+SET text=@text, startDate=@startDate, endDate=@endDate, files=@files
 WHERE id=@id
 GO
 
+DROP PROCEDURE IF EXISTS updateFrameworkReview
+GO
 CREATE PROCEDURE updateFrameworkReview
 @id int,
 @text nvarchar(MAX),
@@ -274,6 +302,8 @@ SET text=@text, numberOfStars=@numberOfStars, link=@link, headline=@headline, fi
 WHERE id=@id
 GO
 
+DROP PROCEDURE IF EXISTS updateReference
+GO
 CREATE PROCEDURE updateReference
 @id int,
 @text nvarchar(MAX),
@@ -286,6 +316,8 @@ SET text=@text, headline=@headline, files=@files
 WHERE id=@id
 GO
 
+DROP PROCEDURE IF EXISTS updatelanguages
+GO
 CREATE PROCEDURE updatelanguages
 @id int,
 @name nvarchar(50)
@@ -295,6 +327,8 @@ SET name=@name
 WHERE id=@id
 GO
 
+DROP PROCEDURE IF EXISTS updateTags
+GO
 CREATE PROCEDURE updateTags
 @id int,
 @tags nvarchar(50)
@@ -304,6 +338,8 @@ SET tags=@tags
 WHERE id=@id
 GO
 
+DROP PROCEDURE IF EXISTS updateImages
+GO
 CREATE PROCEDURE updateImages
 @id int,
 @name nvarchar(50),
@@ -311,7 +347,7 @@ CREATE PROCEDURE updateImages
 @path nvarchar(50)
 AS
 UPDATE images
-SET name=@name, description=@desciption, path=@path
+SET name=@name, description=@description, path=@path
 WHERE id=@id
 GO
 
