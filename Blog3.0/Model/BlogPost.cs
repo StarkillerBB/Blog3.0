@@ -25,9 +25,11 @@ namespace Blog3._0.Model
 
         static void CreateBlogPost(BlogPost blog)
         {
+
+            //Insert entry for the blogPost into database
             SqlCommand cmd = new SqlCommand("createEntries", con);
             SqlDataReader dr;
-
+            //Define that the command is a SP
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
             cmd.Parameters.Add(ParameterMaker("name", blog.type));
@@ -35,6 +37,8 @@ namespace Blog3._0.Model
             cmd.Parameters.Add(ParameterMaker("headline", blog.headline));
             cmd.Parameters.Add(ParameterMaker("active", blog.active));
 
+            //Insert the blogPost into the database
+            cmd = new SqlCommand("createBlogPost", con);
 
             cmd.Parameters.Add(ParameterMaker("text", blog.text));
             cmd.Parameters.Add(ParameterMaker("startDate", blog.startDate));
@@ -50,7 +54,7 @@ namespace Blog3._0.Model
                 if (dr.HasRows)
                 {
                     dr.Read();
-                    blog.id = dr.GetInt32(0);
+                    blog.entriesId = dr.GetInt32(0);
                 }
             }
             catch (Exception)
