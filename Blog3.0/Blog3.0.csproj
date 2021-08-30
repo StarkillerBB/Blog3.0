@@ -58,11 +58,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\BlogPost.cs" />
+    <Compile Include="Controller\FrameworkReview.cs" />
+    <Compile Include="Controller\Reference.cs" />
+    <Compile Include="Model\File.cs" />
     <Compile Include="Model\Images.cs" />
+    <Compile Include="Model\Language.cs" />
     <Compile Include="Model\Tag.cs" />
     <Compile Include="Model\TagCloud.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="View\Contact.cs" />
+    <Compile Include="View\Entry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -89,9 +96,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controller\" />
-    <Folder Include="View\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
