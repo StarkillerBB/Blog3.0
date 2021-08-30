@@ -10,6 +10,7 @@ namespace Blog3._0
     {
         static void Main(string[] args)
         {
+
         }
     }
 }
