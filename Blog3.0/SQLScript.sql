@@ -1,4 +1,4 @@
-﻿﻿DROP TABLE IF EXISTS contact
+﻿DROP TABLE IF EXISTS contact
 GO
 DROP TABLE IF EXISTS tags
 GO
@@ -15,13 +15,11 @@ GO
 DROP TABLE IF EXISTS entries
 GO
 
-
-
 CREATE TABLE [contact] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [name] nvarchar(50),
   [address] nvarchar(50),
-  [phone] nvarchar(10),
+  [phone] int,
   [mail] nvarchar(50),
   [linkedin] nvarchar(50)
 )
@@ -32,51 +30,41 @@ CREATE TABLE [entries] (
   [name] nvarchar(50),
   [postDate] datetime,
   [headline] nvarchar(50),
-  [active] bit
+  [text] nvarchar(MAX),
+  [files] nvarchar(50),
+  [active] bit,
+  [tagsId] int,
+  [imagesId] int,
+  [referenceId] int,
+  [frameworkId] int,
+  [blogPostId] int
 )
 GO
 
 CREATE TABLE [blogPost] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [entryId] int,
-  [text] nvarchar(MAX),
   [startDate] datetime,
   [endDate] datetime,
-  [files] nvarchar(50),
-  [type] nvarchar(50)
+  [postType] nvarchar(50)
 )
 GO
 
 CREATE TABLE [frameworkReview] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [entryId] int,
-  [text] nvarchar(MAX),
   [numberOfStars] int,
   [link] nvarchar(50),
-  [headline] nvarchar(50),
-  [active] bit,
-  [postDate] datetime,
-  [files] nvarchar(50),
-  [type] nvarchar(50)
+  [postType] nvarchar(50)
 )
 GO
 
 CREATE TABLE [reference] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [entryId] int,
-  [text] nvarchar(MAX),
-  [languages] nvarchar(50),
-  [headline] nvarchar(50),
-  [active] bit,
-  [postDate] datetime,
-  [files] nvarchar(50),
-  [type] nvarchar(50)
+  [postType] nvarchar(50)
 )
 GO
 
 CREATE TABLE [images] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [entryId] int,
   [name] nvarchar(50),
   [description] nvarchar(50),
   [path] nvarchar(50)
@@ -92,28 +80,28 @@ GO
 
 CREATE TABLE [tags] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [entryId] int,
   [tags] nvarchar(50)
 )
 GO
 
-ALTER TABLE [blogPost] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
+ALTER TABLE [entries] ADD FOREIGN KEY ([tagsId]) REFERENCES [tags] ([id])
 GO
 
-ALTER TABLE [frameworkReview] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
+ALTER TABLE [entries] ADD FOREIGN KEY ([imagesId]) REFERENCES [images] ([id])
 GO
 
-ALTER TABLE [reference] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
+ALTER TABLE [entries] ADD FOREIGN KEY ([referenceId]) REFERENCES [reference] ([id])
 GO
 
-ALTER TABLE [images] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
+ALTER TABLE [entries] ADD FOREIGN KEY ([frameworkId]) REFERENCES [frameworkReview] ([id])
+GO
+
+ALTER TABLE [entries] ADD FOREIGN KEY ([blogPostId]) REFERENCES [blogpost] ([id])
 GO
 
 ALTER TABLE [languages] ADD FOREIGN KEY ([referenceId]) REFERENCES [reference] ([id])
 GO
 
-ALTER TABLE [tags] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
-GO
 
 -- CREATE
 
@@ -136,51 +124,43 @@ CREATE PROCEDURE createEntries
 @name nvarchar(50),
 @postDate datetime,
 @headline nvarchar(50),
+@text nvarchar(MAX),
+@files nvarchar(50),
 @active bit
 AS
-INSERT INTO entries(name, postDate, headline, active)
-VALUES (@name, @postDate, @headline, @active);
+INSERT INTO entries(name, postDate, headline, text, files, active)
+VALUES (@name, @postDate, @headline, @text, @files, @active);
 GO
 
 DROP PROCEDURE IF EXISTS createBlogPost
 GO
 CREATE PROCEDURE createBlogPost
-@text nvarchar(MAX),
 @startDate datetime,
 @endDate datetime,
-@files nvarchar(50),
-@type nvarchar(50)
+@postType nvarchar(50)
 AS
-INSERT INTO blogPost(text, startDate, endDate, files, type)
-VALUES (@text, @startDate, @endDate, @files, @type)
+INSERT INTO blogPost(startDate, endDate, postType)
+VALUES (@startDate, @endDate, @postType)
 GO
 
 DROP PROCEDURE IF EXISTS createFrameworkReview
 GO
 CREATE PROCEDURE createFrameworkReview
-@text nvarchar(MAX),
 @numberOfStars int,
 @link nvarchar(50),
-@headline nvarchar(50),
-@postDate datetime,
-@files nvarchar(50),
-@type nvarchar(50)
+@postType nvarchar(50)
 AS
-INSERT INTO frameworkReview(text, numberOfStars, link, headline, postDate, files, type)
-VALUES(@text, @numberOfStars, @link, @headline, @postDate, @files, @type)
+INSERT INTO frameworkReview(numberOfStars, link, postType)
+VALUES(@numberOfStars, @link, @postType)
 GO
 
 DROP PROCEDURE IF EXISTS createReference
 GO
 CREATE PROCEDURE createReference
-@text nvarchar(MAX),
-@headline nvarchar(50),
-@postDate datetime,
-@files nvarchar(50),
-@type nvarchar(50)
+@postType nvarchar(50)
 AS
-INSERT INTO reference (text, headline, postDate, files, type)
-VALUES (@text, @headline, @postDate, @files, @type)
+INSERT INTO reference (postType)
+VALUES (@postType)
 GO
 
 DROP PROCEDURE IF EXISTS createLanguages
@@ -222,24 +202,48 @@ SELECT *
 FROM contact
 GO
 
-DROP PROCEDURE IF EXISTS getAllPosts
+DROP PROCEDURE IF EXISTS getAllBlogPosts
 GO
-CREATE PROCEDURE getAllPosts
+CREATE PROCEDURE getAllBlogPosts
 AS
 SELECT *
 FROM entries
-INNER JOIN reference 
-ON entries.id = reference.entryId
+INNER JOIN blogPost
+ON blogPost.id = entries.blogPostId
+INNER JOIN tags
+ON tags.id = entries.tagsId
+INNER JOIN images
+ON images.id = entries.imagesId
+GO
+
+DROP PROCEDURE IF EXISTS getAllFrameworkReviews
+GO
+CREATE PROCEDURE getAllFrameworkReviews
+AS
+SELECT *
+FROM entries
+INNER JOIN frameworkReview
+ON frameworkReview.id = entries.blogPostId
+INNER JOIN tags
+ON tags.id = entries.tagsId
+INNER JOIN images
+ON images.id = entries.imagesId
+GO
+
+DROP PROCEDURE IF EXISTS getAllReference
+GO
+CREATE PROCEDURE getAllReference
+AS
+SELECT *
+FROM entries
+INNER JOIN reference
+ON reference.id = entries.blogPostId
+INNER JOIN tags
+ON tags.id = entries.tagsId
+INNER JOIN images
+ON images.id = entries.imagesId
 INNER JOIN languages
 ON reference.id = languages.referenceId
-INNER JOIN frameworkReview
-ON entries.id = frameworkReview.entryId
-INNER JOIN blogPost
-ON entries.id = blogPost.entryId
-INNER JOIN tags
-ON entries.id = tags.entryId
-INNER JOIN images
-ON entries.id = images.entryId
 GO
 
 --UPDATE information
@@ -265,10 +269,12 @@ CREATE PROCEDURE updateEntries
 @id int,
 @name nvarchar(50),
 @headline nvarchar(50),
+@text nvarchar(MAX),
+@files nvarchar(50),
 @active bit
 AS
 UPDATE entries
-SET name=@name, headline=@headline, active=@active
+SET name=@name, headline=@headline, text=@text, files=@files, active=@active
 WHERE id=@id
 GO
 
@@ -276,13 +282,11 @@ DROP PROCEDURE IF EXISTS updateBlogPost
 GO
 CREATE PROCEDURE updateBlogPost
 @id int,
-@text nvarchar(MAX),
 @startDate datetime,
-@endDate datetime,
-@files nvarchar(50)
+@endDate datetime
 AS
 UPDATE blogPost
-SET text=@text, startDate=@startDate, endDate=@endDate, files=@files
+SET startDate=@startDate, endDate=@endDate
 WHERE id=@id
 GO
 
@@ -290,15 +294,11 @@ DROP PROCEDURE IF EXISTS updateFrameworkReview
 GO
 CREATE PROCEDURE updateFrameworkReview
 @id int,
-@text nvarchar(MAX),
 @numberOfStars int,
-@link nvarchar(50),
-@headline nvarchar(50),
-@postDate datetime,
-@files nvarchar(50)
+@link nvarchar(50)
 AS
 UPDATE frameworkReview
-SET text=@text, numberOfStars=@numberOfStars, link=@link, headline=@headline, files=@files
+SET numberOfStars=@numberOfStars, link=@link
 WHERE id=@id
 GO
 
@@ -306,13 +306,10 @@ DROP PROCEDURE IF EXISTS updateReference
 GO
 CREATE PROCEDURE updateReference
 @id int,
-@text nvarchar(MAX),
-@headline nvarchar(50),
-@postDate datetime,
-@files nvarchar(50)
+@postType nvarchar(50)
 AS
 UPDATE reference
-SET text=@text, headline=@headline, files=@files
+SET postType=@postType
 WHERE id=@id
 GO
 
@@ -350,15 +347,6 @@ UPDATE images
 SET name=@name, description=@description, path=@path
 WHERE id=@id
 GO
-
-
-
-
-
-
-
-
-
 
 
 
