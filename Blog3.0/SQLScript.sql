@@ -1,6 +1,4 @@
-﻿USE MASTER
-
-DROP TABLE IF EXISTS contact
+﻿DROP TABLE IF EXISTS contact
 GO
 DROP TABLE IF EXISTS tags
 GO
@@ -17,13 +15,11 @@ GO
 DROP TABLE IF EXISTS entries
 GO
 
-
-
 CREATE TABLE [contact] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [name] nvarchar(50),
   [address] nvarchar(50),
-  [phone] nvarchar(10),
+  [phone] int,
   [mail] nvarchar(50),
   [linkedin] nvarchar(50)
 )
@@ -36,39 +32,39 @@ CREATE TABLE [entries] (
   [headline] nvarchar(50),
   [text] nvarchar(MAX),
   [files] nvarchar(50),
-  [active] bit
+  [active] bit,
+  [tagsId] int,
+  [imagesId] int,
+  [referenceId] int,
+  [frameworkId] int,
+  [blogPostId] int
 )
 GO
 
 CREATE TABLE [blogPost] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [entryId] int,
   [startDate] datetime,
   [endDate] datetime,
-  [type] nvarchar(50)
+  [postType] nvarchar(50)
 )
 GO
 
 CREATE TABLE [frameworkReview] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [entryId] int,
   [numberOfStars] int,
   [link] nvarchar(50),
-  [type] nvarchar(50)
+  [postType] nvarchar(50)
 )
 GO
 
 CREATE TABLE [reference] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [entryId] int,
-  [languages] nvarchar(50),
-  [type] nvarchar(50)
+  [postType] nvarchar(50)
 )
 GO
 
 CREATE TABLE [images] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [entryId] int,
   [name] nvarchar(50),
   [description] nvarchar(50),
   [path] nvarchar(50)
@@ -84,28 +80,28 @@ GO
 
 CREATE TABLE [tags] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [entryId] int,
   [tags] nvarchar(50)
 )
 GO
 
-ALTER TABLE [blogPost] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
+ALTER TABLE [entries] ADD FOREIGN KEY ([tagsId]) REFERENCES [tags] ([id])
 GO
 
-ALTER TABLE [frameworkReview] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
+ALTER TABLE [entries] ADD FOREIGN KEY ([imagesId]) REFERENCES [images] ([id])
 GO
 
-ALTER TABLE [reference] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
+ALTER TABLE [entries] ADD FOREIGN KEY ([referenceId]) REFERENCES [reference] ([id])
 GO
 
-ALTER TABLE [images] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
+ALTER TABLE [entries] ADD FOREIGN KEY ([frameworkId]) REFERENCES [frameworkReview] ([id])
+GO
+
+ALTER TABLE [entries] ADD FOREIGN KEY ([blogPostId]) REFERENCES [blogpost] ([id])
 GO
 
 ALTER TABLE [languages] ADD FOREIGN KEY ([referenceId]) REFERENCES [reference] ([id])
 GO
 
-ALTER TABLE [tags] ADD FOREIGN KEY ([entryId]) REFERENCES [entries] ([id])
-GO
 
 -- CREATE
 
@@ -141,10 +137,10 @@ GO
 CREATE PROCEDURE createBlogPost
 @startDate datetime,
 @endDate datetime,
-@type nvarchar(50)
+@postType nvarchar(50)
 AS
-INSERT INTO blogPost(startDate, endDate, type)
-VALUES (@startDate, @endDate, @type)
+INSERT INTO blogPost(startDate, endDate, postType)
+VALUES (@startDate, @endDate, @postType)
 GO
 
 DROP PROCEDURE IF EXISTS createFrameworkReview
@@ -152,19 +148,19 @@ GO
 CREATE PROCEDURE createFrameworkReview
 @numberOfStars int,
 @link nvarchar(50),
-@type nvarchar(50)
+@postType nvarchar(50)
 AS
-INSERT INTO frameworkReview(numberOfStars, link, type)
-VALUES(@numberOfStars, @link, @type)
+INSERT INTO frameworkReview(numberOfStars, link, postType)
+VALUES(@numberOfStars, @link, @postType)
 GO
 
 DROP PROCEDURE IF EXISTS createReference
 GO
 CREATE PROCEDURE createReference
-@type nvarchar(50)
+@postType nvarchar(50)
 AS
-INSERT INTO reference (type)
-VALUES (@type)
+INSERT INTO reference (postType)
+VALUES (@postType)
 GO
 
 DROP PROCEDURE IF EXISTS createLanguages
@@ -206,24 +202,48 @@ SELECT *
 FROM contact
 GO
 
-DROP PROCEDURE IF EXISTS getAllPosts
+DROP PROCEDURE IF EXISTS getAllBlogPosts
 GO
-CREATE PROCEDURE getAllPosts
+CREATE PROCEDURE getAllBlogPosts
 AS
 SELECT *
 FROM entries
-INNER JOIN reference 
-ON entries.id = reference.entryId
+INNER JOIN blogPost
+ON blogPost.id = entries.blogPostId
+INNER JOIN tags
+ON tags.id = entries.tagsId
+INNER JOIN images
+ON images.id = entries.imagesId
+GO
+
+DROP PROCEDURE IF EXISTS getAllFrameworkReviews
+GO
+CREATE PROCEDURE getAllFrameworkReviews
+AS
+SELECT *
+FROM entries
+INNER JOIN frameworkReview
+ON frameworkReview.id = entries.blogPostId
+INNER JOIN tags
+ON tags.id = entries.tagsId
+INNER JOIN images
+ON images.id = entries.imagesId
+GO
+
+DROP PROCEDURE IF EXISTS getAllReference
+GO
+CREATE PROCEDURE getAllReference
+AS
+SELECT *
+FROM entries
+INNER JOIN reference
+ON reference.id = entries.blogPostId
+INNER JOIN tags
+ON tags.id = entries.tagsId
+INNER JOIN images
+ON images.id = entries.imagesId
 INNER JOIN languages
 ON reference.id = languages.referenceId
-INNER JOIN frameworkReview
-ON entries.id = frameworkReview.entryId
-INNER JOIN blogPost
-ON entries.id = blogPost.entryId
-INNER JOIN tags
-ON entries.id = tags.entryId
-INNER JOIN images
-ON entries.id = images.entryId
 GO
 
 --UPDATE information
@@ -286,10 +306,10 @@ DROP PROCEDURE IF EXISTS updateReference
 GO
 CREATE PROCEDURE updateReference
 @id int,
-@type nvarchar(50)
+@postType nvarchar(50)
 AS
 UPDATE reference
-SET type=@type
+SET postType=@postType
 WHERE id=@id
 GO
 
