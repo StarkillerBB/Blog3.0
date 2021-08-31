@@ -1,4 +1,6 @@
-﻿﻿DROP TABLE IF EXISTS contact
+﻿USE MASTER
+
+DROP TABLE IF EXISTS contact
 GO
 DROP TABLE IF EXISTS tags
 GO
@@ -32,6 +34,8 @@ CREATE TABLE [entries] (
   [name] nvarchar(50),
   [postDate] datetime,
   [headline] nvarchar(50),
+  [text] nvarchar(MAX),
+  [files] nvarchar(50),
   [active] bit
 )
 GO
@@ -39,10 +43,8 @@ GO
 CREATE TABLE [blogPost] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [entryId] int,
-  [text] nvarchar(MAX),
   [startDate] datetime,
   [endDate] datetime,
-  [files] nvarchar(50),
   [type] nvarchar(50)
 )
 GO
@@ -50,13 +52,8 @@ GO
 CREATE TABLE [frameworkReview] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [entryId] int,
-  [text] nvarchar(MAX),
   [numberOfStars] int,
   [link] nvarchar(50),
-  [headline] nvarchar(50),
-  [active] bit,
-  [postDate] datetime,
-  [files] nvarchar(50),
   [type] nvarchar(50)
 )
 GO
@@ -64,12 +61,7 @@ GO
 CREATE TABLE [reference] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [entryId] int,
-  [text] nvarchar(MAX),
   [languages] nvarchar(50),
-  [headline] nvarchar(50),
-  [active] bit,
-  [postDate] datetime,
-  [files] nvarchar(50),
   [type] nvarchar(50)
 )
 GO
@@ -136,51 +128,43 @@ CREATE PROCEDURE createEntries
 @name nvarchar(50),
 @postDate datetime,
 @headline nvarchar(50),
+@text nvarchar(MAX),
+@files nvarchar(50),
 @active bit
 AS
-INSERT INTO entries(name, postDate, headline, active)
-VALUES (@name, @postDate, @headline, @active);
+INSERT INTO entries(name, postDate, headline, text, files, active)
+VALUES (@name, @postDate, @headline, @text, @files, @active);
 GO
 
 DROP PROCEDURE IF EXISTS createBlogPost
 GO
 CREATE PROCEDURE createBlogPost
-@text nvarchar(MAX),
 @startDate datetime,
 @endDate datetime,
-@files nvarchar(50),
 @type nvarchar(50)
 AS
-INSERT INTO blogPost(text, startDate, endDate, files, type)
-VALUES (@text, @startDate, @endDate, @files, @type)
+INSERT INTO blogPost(startDate, endDate, type)
+VALUES (@startDate, @endDate, @type)
 GO
 
 DROP PROCEDURE IF EXISTS createFrameworkReview
 GO
 CREATE PROCEDURE createFrameworkReview
-@text nvarchar(MAX),
 @numberOfStars int,
 @link nvarchar(50),
-@headline nvarchar(50),
-@postDate datetime,
-@files nvarchar(50),
 @type nvarchar(50)
 AS
-INSERT INTO frameworkReview(text, numberOfStars, link, headline, postDate, files, type)
-VALUES(@text, @numberOfStars, @link, @headline, @postDate, @files, @type)
+INSERT INTO frameworkReview(numberOfStars, link, type)
+VALUES(@numberOfStars, @link, @type)
 GO
 
 DROP PROCEDURE IF EXISTS createReference
 GO
 CREATE PROCEDURE createReference
-@text nvarchar(MAX),
-@headline nvarchar(50),
-@postDate datetime,
-@files nvarchar(50),
 @type nvarchar(50)
 AS
-INSERT INTO reference (text, headline, postDate, files, type)
-VALUES (@text, @headline, @postDate, @files, @type)
+INSERT INTO reference (type)
+VALUES (@type)
 GO
 
 DROP PROCEDURE IF EXISTS createLanguages
@@ -265,10 +249,12 @@ CREATE PROCEDURE updateEntries
 @id int,
 @name nvarchar(50),
 @headline nvarchar(50),
+@text nvarchar(MAX),
+@files nvarchar(50),
 @active bit
 AS
 UPDATE entries
-SET name=@name, headline=@headline, active=@active
+SET name=@name, headline=@headline, text=@text, files=@files, active=@active
 WHERE id=@id
 GO
 
@@ -276,13 +262,11 @@ DROP PROCEDURE IF EXISTS updateBlogPost
 GO
 CREATE PROCEDURE updateBlogPost
 @id int,
-@text nvarchar(MAX),
 @startDate datetime,
-@endDate datetime,
-@files nvarchar(50)
+@endDate datetime
 AS
 UPDATE blogPost
-SET text=@text, startDate=@startDate, endDate=@endDate, files=@files
+SET startDate=@startDate, endDate=@endDate
 WHERE id=@id
 GO
 
@@ -290,15 +274,11 @@ DROP PROCEDURE IF EXISTS updateFrameworkReview
 GO
 CREATE PROCEDURE updateFrameworkReview
 @id int,
-@text nvarchar(MAX),
 @numberOfStars int,
-@link nvarchar(50),
-@headline nvarchar(50),
-@postDate datetime,
-@files nvarchar(50)
+@link nvarchar(50)
 AS
 UPDATE frameworkReview
-SET text=@text, numberOfStars=@numberOfStars, link=@link, headline=@headline, files=@files
+SET numberOfStars=@numberOfStars, link=@link
 WHERE id=@id
 GO
 
@@ -306,13 +286,10 @@ DROP PROCEDURE IF EXISTS updateReference
 GO
 CREATE PROCEDURE updateReference
 @id int,
-@text nvarchar(MAX),
-@headline nvarchar(50),
-@postDate datetime,
-@files nvarchar(50)
+@type nvarchar(50)
 AS
 UPDATE reference
-SET text=@text, headline=@headline, files=@files
+SET type=@type
 WHERE id=@id
 GO
 
@@ -350,15 +327,6 @@ UPDATE images
 SET name=@name, description=@description, path=@path
 WHERE id=@id
 GO
-
-
-
-
-
-
-
-
-
 
 
 
