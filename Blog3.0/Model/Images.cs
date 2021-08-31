@@ -8,5 +8,8 @@ namespace Blog3._0.Model
 {
     class Images
     {
+
+        public int imageId { get; set; }
+        public int MyProperty { get; set; }
     }
 }
