@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Blog3._0.Model
 {
-    class Entry
+    abstract public class Entry
     {
-        public int entriesId { get; set; }
-        public string name { get; set; }
-        public DateTime postDate { get; set; }
-        public string headline { get; set; }
-        public bool active { get; set; }
-
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public DateTime PostDate { get; set; }
+        public string Headline { get; set; }
+        public bool Active { get; set; }
+        public Entry() { }
     }
 }

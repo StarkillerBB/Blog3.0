@@ -10,6 +10,9 @@ namespace Blog3._0.Model
     {
 
         public int imageId { get; set; }
-        public int MyProperty { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
+        public string path { get; set; }
+        public Images() { }
     }
 }

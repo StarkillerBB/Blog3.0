@@ -71,6 +71,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\Contact.cs" />
     <Compile Include="Model\Entry.cs" />
+    <Compile Include="UoW\DataLayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -97,8 +98,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UoW\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
