@@ -20,6 +20,7 @@ namespace Blog3._0.Model
         public string Files { get; set; }
         public string Type { get; set; }
         public List<Images> Image { get; set; }
+        public List<TagCloud> Tags { get; set; }
         public BlogPost() { }
 
 

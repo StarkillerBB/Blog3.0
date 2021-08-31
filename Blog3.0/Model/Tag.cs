@@ -8,5 +8,6 @@ namespace Blog3._0.Model
 {
     class Tag
     {
+        public string Name { get; set; }
     }
 }

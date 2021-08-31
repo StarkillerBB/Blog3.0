@@ -8,5 +8,8 @@ namespace Blog3._0.Model
 {
     class TagCloud
     {
+        public int TagCloudId { get; set; }
+        public string Tags { get; set; }
+        public TagCloud() { }
     }
 }
