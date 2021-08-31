@@ -19,54 +19,54 @@ namespace Blog3._0.UoW
         static readonly string strcon = ConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
         static readonly SqlConnection con = new SqlConnection(strcon);
 
-        static void CreateBlogPost(BlogPost blog)
-        {
+        //static void CreateBlogPost(BlogPost blog)
+        //{
 
-            //Insert entry for the blogPost into database
-            SqlCommand cmd = new SqlCommand("createEntries", con);
-            SqlDataReader dr;
-            //Define that the command is a SP
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        //    //Insert entry for the blogPost into database
+        //    SqlCommand cmd = new SqlCommand("createEntries", con);
+        //    SqlDataReader dr;
+        //    //Define that the command is a SP
+        //    cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-            cmd.Parameters.Add(ParameterMaker("name", blog.type));
-            cmd.Parameters.Add(ParameterMaker("postDate", blog.postDate));
-            cmd.Parameters.Add(ParameterMaker("headline", blog.headline));
-            cmd.Parameters.Add(ParameterMaker("active", blog.active));
+        //    cmd.Parameters.Add(ParameterMaker("name", blog.type));
+        //    cmd.Parameters.Add(ParameterMaker("postDate", blog.postDate));
+        //    cmd.Parameters.Add(ParameterMaker("headline", blog.headline));
+        //    cmd.Parameters.Add(ParameterMaker("active", blog.active));
 
-            //Insert the blogPost into the database
-            cmd = new SqlCommand("createBlogPost", con);
+        //    //Insert the blogPost into the database
+        //    cmd = new SqlCommand("createBlogPost", con);
 
-            cmd.Parameters.Add(ParameterMaker("text", blog.text));
-            cmd.Parameters.Add(ParameterMaker("startDate", blog.startDate));
-            cmd.Parameters.Add(ParameterMaker("endDate", blog.endDate));
-            cmd.Parameters.Add(ParameterMaker("files", blog.files));
-            cmd.Parameters.Add(ParameterMaker("type", blog.type));
+        //    cmd.Parameters.Add(ParameterMaker("text", blog.text));
+        //    cmd.Parameters.Add(ParameterMaker("startDate", blog.startDate));
+        //    cmd.Parameters.Add(ParameterMaker("endDate", blog.endDate));
+        //    cmd.Parameters.Add(ParameterMaker("files", blog.files));
+        //    cmd.Parameters.Add(ParameterMaker("type", blog.type));
 
-            //Insert the images into the database
-            cmd = new SqlCommand("createImages", con);
+        //    //Insert the images into the database
+        //    cmd = new SqlCommand("createImages", con);
 
 
 
-            con.Open();
-            try
-            {
-                dr = cmd.ExecuteReader();
-                if (dr.HasRows)
-                {
-                    dr.Read();
-                    blog.entriesId = dr.GetInt32(0);
-                }
-            }
-            catch (Exception)
-            {
+        //    con.Open();
+        //    try
+        //    {
+        //        dr = cmd.ExecuteReader();
+        //        if (dr.HasRows)
+        //        {
+        //            dr.Read();
+        //            blog.entriesId = dr.GetInt32(0);
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
 
-                throw;
-            }
-            finally
-            {
-                con.Close();
-            }
-        }
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        con.Close();
+        //    }
+        //}
 
         static List<Entry> GetAllBlogPosts()
         {
