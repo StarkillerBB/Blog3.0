@@ -84,6 +84,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DependentUpon>BlogDB.mdf</DependentUpon>
     </Content>
+    <Content Include="ReadMe.txt" />
     <Content Include="SQLScript.sql" />
   </ItemGroup>
   <ItemGroup>
