@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Blog3._0.Model
 {
-    class TagCloud
+    public class TagCloud
     {
         public int TagCloudId { get; set; }
         public string Tags { get; set; }

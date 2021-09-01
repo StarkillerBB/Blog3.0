@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Blog3._0.Model
 {
-    class Images
+    public class Images
     {
 
         public int imageId { get; set; }

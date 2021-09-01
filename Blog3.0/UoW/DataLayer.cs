@@ -9,7 +9,7 @@ using Blog3._0.Model;
 
 namespace Blog3._0.UoW
 {
-    class DataLayer
+    public class DataLayer
     {
 
         public List<Entry> entry = new List<Entry>();

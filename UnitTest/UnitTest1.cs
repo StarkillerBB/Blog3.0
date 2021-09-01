@@ -10,9 +10,10 @@ namespace UnitTest
         [Fact]
         public void Test1()
         {
+            DataLayer dataLayer = new DataLayer();
 
             //Arrange
-
+            
             //Act
 
             //Assert

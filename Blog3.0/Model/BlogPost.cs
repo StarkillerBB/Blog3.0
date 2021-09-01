@@ -9,11 +9,11 @@ using Blog3._0.Model;
 
 namespace Blog3._0.Model
 {
-    class BlogPost : Entry
+    public class BlogPost : Entry
     {
         
 
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public string Text { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
