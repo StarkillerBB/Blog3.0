@@ -25,7 +25,7 @@ namespace Blog3._0
             TagCloud tagCloudUpdate = new TagCloud() { Tags = "UpdatedHelp" };
 
 
-            dataLayer.CreateBlogPost(blogPost, image, tagCloud);
+            Task.Run(() => dataLayer.CreateBlogPost(blogPost, image, tagCloud));
             dataLayer.UpdateBlogPost(blogPostUpdate, imageUpdate, tagCloudUpdate);
             dataLayer.GetAllBlogPosts();
         }
