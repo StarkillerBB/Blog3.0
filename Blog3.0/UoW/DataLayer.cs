@@ -20,6 +20,12 @@ namespace Blog3._0.UoW
         static readonly string strcon = ConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
         static readonly SqlConnection con = new SqlConnection(strcon);
 
+        /// <summary>
+        /// Creating a blogpost that uses information from the Entry
+        /// </summary>
+        /// <param name="blog"></param>
+        /// <param name="image"></param>
+        /// <param name="tags"></param>
         public void CreateBlogPost(BlogPost blog, Images image, TagCloud tags)
         {
             //Insert tags for the blogPost into database
@@ -119,6 +125,12 @@ namespace Blog3._0.UoW
             }
         }
 
+        /// <summary>
+        /// Update the specifc post selected with the ID
+        /// </summary>
+        /// <param name="blog"></param>
+        /// <param name="image"></param>
+        /// <param name="tags"></param>
         public void UpdateBlogPost(BlogPost blog, Images image, TagCloud tags)
         {
             //Insert tags for the blogPost into database
@@ -193,6 +205,10 @@ namespace Blog3._0.UoW
             }
         }
 
+        /// <summary>
+        /// Gets all blogposts from the database
+        /// </summary>
+        /// <returns></returns>
         public List<BlogPost> GetAllBlogPosts()
         {
 
